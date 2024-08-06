@@ -13,25 +13,6 @@ import (
 	"github.com/fatih/color"
 )
 
-// ReplaceWhitespacesWithUnderscore replaces all whitespaces in the input string with underscores.
-func ReplaceWhitespacesWithUnderscore(s string) string {
-    // Create a new builder to build the resulting string
-    var result strings.Builder
-    
-    // Iterate through each character in the input string
-    for _, ch := range s {
-        // Check if the character is a whitespace
-        if unicode.IsSpace(ch) {
-            result.WriteRune('_')
-        } else {
-            result.WriteRune(ch)
-        }
-    }
-    
-    // Return the resulting string
-    return result.String()
-}
-
 type Weather struct {
 	Location struct{
 		Name string `json:"name"`
@@ -57,6 +38,25 @@ type Weather struct {
 			} `json:"hour"`
 		} `json:"forecastday"`
 	} `json:"forecast"`
+}
+
+// ReplaceWhitespacesWithUnderscore replaces all whitespaces in the input string with underscores.
+func ReplaceWhitespacesWithUnderscore(s string) string {
+    // Create a new builder to build the resulting string
+    var result strings.Builder
+    
+    // Iterate through each character in the input string
+    for _, ch := range s {
+        // Check if the character is a whitespace
+        if unicode.IsSpace(ch) {
+            result.WriteRune('_')
+        } else {
+            result.WriteRune(ch)
+        }
+    }
+    
+    // Return the resulting string
+    return result.String()
 }
 
 func OutputLocation(args []string) string {
