@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Weather struct {
@@ -66,6 +68,17 @@ func main() {
 
 	for _, hour := range hours {
 		date := time.Unix(hour.TimeEpoch, 0)
-		fmt.Printf("%s - %.0fC, %.0f, %s\n", date.Format("15:04"), hour.TempC, hour.ChanceOfRain, hour.Condition.Text)
+
+		if date.Before(time.Now()) {
+			continue
+		}
+
+		message := fmt.Sprintf("%s - %.0fC, %.0f, %s\n", date.Format("15:04"), hour.TempC, hour.ChanceOfRain, hour.Condition.Text)
+
+		if hour.ChanceOfRain < 40 {
+			fmt.Print(message)
+		} else {
+			color.Red(message)
+		}
 	}
 }
