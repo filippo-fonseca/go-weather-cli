@@ -6,14 +6,36 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
+	"unicode"
 
 	"github.com/fatih/color"
 )
 
+// ReplaceWhitespacesWithUnderscore replaces all whitespaces in the input string with underscores.
+func ReplaceWhitespacesWithUnderscore(s string) string {
+    // Create a new builder to build the resulting string
+    var result strings.Builder
+    
+    // Iterate through each character in the input string
+    for _, ch := range s {
+        // Check if the character is a whitespace
+        if unicode.IsSpace(ch) {
+            result.WriteRune('_')
+        } else {
+            result.WriteRune(ch)
+        }
+    }
+    
+    // Return the resulting string
+    return result.String()
+}
+
 type Weather struct {
 	Location struct{
 		Name string `json:"name"`
+		Region string `json:"region"`
 		Country string `json:"country"`
 	} `json:"location"`
 	Current struct{
@@ -37,12 +59,27 @@ type Weather struct {
 	} `json:"forecast"`
 }
 
-func main() {
-	q := "San_Jose_Costa_Rica"
-
+func OutputLocation(args []string) string {
+	var q string
 	if len(os.Args) >= 2 {
-		q = os.Args[1]
-	}
+		length := len(os.Args)
+		for i := 1; i < length; i++ {
+			if (i == 1) {
+				q = os.Args[i]
+				continue
+			}
+			q += "_" + os.Args[i]
+		}
+		fmt.Println(q)
+	} else {
+		q = "San_Jose_Costa_Rica"
+	}		
+
+	return q
+}
+
+func main() {
+	q := OutputLocation(os.Args)
 	
 	res, err := http.Get("https://api.weatherapi.com/v1/forecast.json?key=f339f0fe0fa9486da65230533240508&q=" + q + "&days=7")
 
@@ -71,7 +108,7 @@ func main() {
 
 	location, current, hours := weather.Location, weather.Current, weather.Forecast.Forecastday[0].Hour
 
-	fmt.Printf("%s, %s: %.0fC, %s\n", location.Name, location.Country, current.TempC, current.Condition.Text)
+	fmt.Printf("%s, %s, %s: %.0fC, %s\n", location.Name, location.Region, location.Country, current.TempC, current.Condition.Text)
 
 	for _, hour := range hours {
 		date := time.Unix(hour.TimeEpoch, 0)
