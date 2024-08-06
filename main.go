@@ -70,7 +70,6 @@ func OutputLocation(args []string) string {
 			}
 			q += "_" + os.Args[i]
 		}
-		fmt.Println(q)
 	} else {
 		q = "San_Jose_Costa_Rica"
 	}		
